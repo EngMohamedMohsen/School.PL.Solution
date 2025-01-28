@@ -12,7 +12,7 @@ using School.DAL.Contexts;
 namespace School.DAL.Migrations
 {
     [DbContext(typeof(SchoolDbContext))]
-    [Migration("20250128142521_InitialCreate")]
+    [Migration("20250128143724_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
