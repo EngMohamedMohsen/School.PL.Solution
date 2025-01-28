@@ -1,3 +1,7 @@
+using Microsoft.EntityFrameworkCore;
+using School.DAL.Contexts;
+using System;
+
 namespace School.PL
 {
     public class Program
@@ -8,6 +12,9 @@ namespace School.PL
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+
+            builder.Services.AddDbContext<SchoolDbContext>(options => {options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionString"));});//Allow DI For AppDbContext
 
             var app = builder.Build();
 
