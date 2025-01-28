@@ -29,7 +29,7 @@ namespace School.DAL.Models
         public DateTime DateOfCreation { get; set; } = DateTime.Now;
 
         // Many TO Many Relation
-        public virtual ICollection<StudentClass> Classies { get; set; }
+        public virtual ICollection<Classes> Classes { get; set; }
 
     }
 }
