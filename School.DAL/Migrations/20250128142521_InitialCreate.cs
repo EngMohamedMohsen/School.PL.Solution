@@ -29,7 +29,7 @@ namespace School.DAL.Migrations
                 name: "Classes",
                 columns: table => new
                 {
-                    C_Id = table.Column<int>(type: "int", nullable: false)
+                    ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     C_Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ClassName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
@@ -37,14 +37,14 @@ namespace School.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Classes", x => x.C_Id);
+                    table.PrimaryKey("PK_Classes", x => x.ID);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Students",
                 columns: table => new
                 {
-                    S_Id = table.Column<int>(type: "int", nullable: false)
+                    ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     S_Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     StudentName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
@@ -54,14 +54,14 @@ namespace School.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Students", x => x.S_Id);
+                    table.PrimaryKey("PK_Students", x => x.ID);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Teachers",
                 columns: table => new
                 {
-                    T_Id = table.Column<int>(type: "int", nullable: false)
+                    ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1000, 1"),
                     T_Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TeacherName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
@@ -71,37 +71,37 @@ namespace School.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Teachers", x => x.T_Id);
+                    table.PrimaryKey("PK_Teachers", x => x.ID);
                 });
 
             migrationBuilder.CreateTable(
                 name: "ClassesStudent",
                 columns: table => new
                 {
-                    ClassesC_Id = table.Column<int>(type: "int", nullable: false),
-                    StudentsS_Id = table.Column<int>(type: "int", nullable: false)
+                    ClassesID = table.Column<int>(type: "int", nullable: false),
+                    StudentsID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ClassesStudent", x => new { x.ClassesC_Id, x.StudentsS_Id });
+                    table.PrimaryKey("PK_ClassesStudent", x => new { x.ClassesID, x.StudentsID });
                     table.ForeignKey(
-                        name: "FK_ClassesStudent_Classes_ClassesC_Id",
-                        column: x => x.ClassesC_Id,
+                        name: "FK_ClassesStudent_Classes_ClassesID",
+                        column: x => x.ClassesID,
                         principalTable: "Classes",
-                        principalColumn: "C_Id",
+                        principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ClassesStudent_Students_StudentsS_Id",
-                        column: x => x.StudentsS_Id,
+                        name: "FK_ClassesStudent_Students_StudentsID",
+                        column: x => x.StudentsID,
                         principalTable: "Students",
-                        principalColumn: "S_Id",
+                        principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClassesStudent_StudentsS_Id",
+                name: "IX_ClassesStudent_StudentsID",
                 table: "ClassesStudent",
-                column: "StudentsS_Id");
+                column: "StudentsID");
         }
 
         /// <inheritdoc />

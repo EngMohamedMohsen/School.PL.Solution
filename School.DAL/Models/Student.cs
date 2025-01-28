@@ -8,9 +8,8 @@ using System.Threading.Tasks;
 
 namespace School.DAL.Models
 {
-    public class Student 
+    public class Student : BaseEntity
     {
-        public int S_Id { get; set; }
 
         [Required(ErrorMessage = "Code Is Required")]
         public String S_Code { get; set; }

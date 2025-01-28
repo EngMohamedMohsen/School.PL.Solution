@@ -24,27 +24,27 @@ namespace School.DAL.Migrations
 
             modelBuilder.Entity("ClassesStudent", b =>
                 {
-                    b.Property<int>("ClassesC_Id")
+                    b.Property<int>("ClassesID")
                         .HasColumnType("int");
 
-                    b.Property<int>("StudentsS_Id")
+                    b.Property<int>("StudentsID")
                         .HasColumnType("int");
 
-                    b.HasKey("ClassesC_Id", "StudentsS_Id");
+                    b.HasKey("ClassesID", "StudentsID");
 
-                    b.HasIndex("StudentsS_Id");
+                    b.HasIndex("StudentsID");
 
                     b.ToTable("ClassesStudent");
                 });
 
             modelBuilder.Entity("School.DAL.Models.Admin", b =>
                 {
-                    b.Property<int>("Admin_Id")
+                    b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("Code");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Admin_Id"), 10L, 10);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 10L, 10);
 
                     b.Property<string>("Admin_Name")
                         .IsRequired()
@@ -56,18 +56,18 @@ namespace School.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Admin_Id");
+                    b.HasKey("ID");
 
                     b.ToTable("Admins");
                 });
 
             modelBuilder.Entity("School.DAL.Models.Classes", b =>
                 {
-                    b.Property<int>("C_Id")
+                    b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("C_Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<string>("C_Code")
                         .IsRequired()
@@ -84,18 +84,18 @@ namespace School.DAL.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDate()");
 
-                    b.HasKey("C_Id");
+                    b.HasKey("ID");
 
                     b.ToTable("Classes");
                 });
 
             modelBuilder.Entity("School.DAL.Models.Student", b =>
                 {
-                    b.Property<int>("S_Id")
+                    b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("S_Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<DateTime>("DateOfCreation")
                         .ValueGeneratedOnAdd()
@@ -120,18 +120,18 @@ namespace School.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("S_Id");
+                    b.HasKey("ID");
 
                     b.ToTable("Students");
                 });
 
             modelBuilder.Entity("School.DAL.Models.Teacher", b =>
                 {
-                    b.Property<int>("T_Id")
+                    b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("T_Id"), 1000L);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1000L);
 
                     b.Property<DateTime>("DateOfCreation")
                         .ValueGeneratedOnAdd()
@@ -156,7 +156,7 @@ namespace School.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("T_Id");
+                    b.HasKey("ID");
 
                     b.ToTable("Teachers");
                 });
@@ -165,13 +165,13 @@ namespace School.DAL.Migrations
                 {
                     b.HasOne("School.DAL.Models.Classes", null)
                         .WithMany()
-                        .HasForeignKey("ClassesC_Id")
+                        .HasForeignKey("ClassesID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("School.DAL.Models.Student", null)
                         .WithMany()
-                        .HasForeignKey("StudentsS_Id")
+                        .HasForeignKey("StudentsID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

@@ -13,9 +13,9 @@ namespace School.DAL.Configuration
     {
         public void Configure(EntityTypeBuilder<Teacher> builder)
         {
-            builder.HasKey(T=>T.T_Id);
+            builder.HasKey(T=>T.ID);
 
-            builder.Property(T=>T.T_Id).UseIdentityColumn(1000, 1);
+            builder.Property(T=>T.ID).UseIdentityColumn(1000, 1);
 
             builder.Property(T=>T.T_Name).HasColumnName("TeacherName").HasColumnType("nvarchar").HasMaxLength(50);
 
