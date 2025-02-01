@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using School.BLL.Interfaces;
+using School.BLL.Repositores;
 using School.DAL.Contexts;
 using System;
 
@@ -15,6 +17,7 @@ namespace School.PL
 
 
             builder.Services.AddDbContext<SchoolDbContext>(options => {options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionString"));});//Allow DI For AppDbContext
+            builder.Services.AddScoped<IUnitOfWork,UnitOfWork>(); // Allow Dependency Injection For UnitOfWork Service
 
             var app = builder.Build();
 

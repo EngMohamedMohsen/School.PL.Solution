@@ -1,4 +1,5 @@
-﻿using School.BLL.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using School.BLL.Interfaces;
 using School.DAL.Contexts;
 using School.DAL.Models;
 using System;
@@ -17,22 +18,33 @@ namespace School.BLL.Repositores
         {
             this._SchoolDbContext = schoolDbContext;
         }
-        public int Add(T Entity)
+
+        public IEnumerable<T> GetAllData()
+        {
+            if (typeof(T)==typeof(Student))
+            {
+                return (IEnumerable<T>)_SchoolDbContext.Students.Include(S=>S.Classes).ToList();
+            }
+            return _SchoolDbContext.Set<T>().ToList();
+        }
+
+        public T GetById(int id)
+        {
+            return _SchoolDbContext.Set<T>().Find(id);
+        }
+        public void Add(T Entity)
         {
             _SchoolDbContext.Add(Entity);
-            return _SchoolDbContext.SaveChanges();
         }
 
-        public int Update(T Entity)
+        public void Update(T Entity)
         {
             _SchoolDbContext.Update(Entity);
-            return _SchoolDbContext.SaveChanges();
         }
 
-        public int Delete(T Entity)
+        public void Delete(T Entity)
         {
             _SchoolDbContext.Remove(Entity);
-            return _SchoolDbContext.SaveChanges();
         }
 
 
