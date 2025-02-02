@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using School.BLL.Interfaces;
 using School.DAL.Contexts;
 using School.DAL.Models;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace School.BLL.Repositores
 {
-    public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
+    public class GenericRepository<T> : IGenericRepository<T> where T : IdentityUser
     {
         private readonly SchoolDbContext _SchoolDbContext;
 

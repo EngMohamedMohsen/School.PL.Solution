@@ -13,12 +13,7 @@ namespace School.DAL.Configuration
     {
         public void Configure(EntityTypeBuilder<Classes> builder)
         {
-            builder.HasKey(C => C.ID);
-
-            builder.Property(C=>C.ID).UseIdentityColumn(1,1);
-
             builder.Property(C=>C.C_Name).HasColumnName("ClassName").HasColumnType("nvarchar").HasMaxLength(50);
-
 
             builder.Property(C=>C.DateOfCreation).HasDefaultValueSql("GETDate()");
 

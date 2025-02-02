@@ -5,10 +5,11 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 
 namespace School.DAL.Models
 {
-    public class Classes : BaseEntity
+    public class Classes : IdentityUser
     {
 
         [Required(ErrorMessage = "Code Is Required")]
