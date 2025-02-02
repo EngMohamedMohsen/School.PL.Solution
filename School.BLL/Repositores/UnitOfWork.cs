@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace School.BLL.Repositores
 {
-    public class UnitOfWork:IUnitOfWork
+    public class UnitOfWork : IUnitOfWork
     {
         private readonly TeacherRepository _teacherRepository;
         private readonly AdminRepository _adminRepository;
@@ -23,15 +23,19 @@ namespace School.BLL.Repositores
             _classesRepository=new ClassesRepository(schoolDbContext);
             _teacherRepository=new TeacherRepository(schoolDbContext);
             _schoolDbContext = schoolDbContext;
+        
         }
         public IAdminRepository AdminRepository => _adminRepository;
+        
         public IStudentRepository StudentRepository => _studentRepository;
+        
         public IClassesRepository ClassesRepository => _classesRepository;
+        
         public ITeacherRepository TeacherRepository => _teacherRepository;
 
-        public int SaveData()
+        public async Task<int> SaveDataAsync()
         {
-            return _schoolDbContext.SaveChanges();
+            return await _schoolDbContext.SaveChangesAsync();
         }
     }
 }

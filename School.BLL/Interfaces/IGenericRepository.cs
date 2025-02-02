@@ -8,11 +8,14 @@ namespace School.BLL.Interfaces
 {
     public interface IGenericRepository<T>
     {
-        IEnumerable<T> GetAllData();
+        Task<IEnumerable<T>> GetAllAsync();
 
-        T GetById(int id);
-        void Add(T Entity);
+        Task<T> GetByIdAsync(int id);
+        
+        Task AddAsync(T Entity);
+        
         void Update(T Entity);
+        
         void Delete(T Entity);
     }
 }

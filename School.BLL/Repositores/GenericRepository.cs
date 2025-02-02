@@ -19,22 +19,22 @@ namespace School.BLL.Repositores
             this._SchoolDbContext = schoolDbContext;
         }
 
-        public IEnumerable<T> GetAllData()
+        public async Task<IEnumerable<T>> GetAllAsync()
         {
             if (typeof(T)==typeof(Student))
             {
-                return (IEnumerable<T>)_SchoolDbContext.Students.Include(S=>S.Classes).ToList();
+                return (IEnumerable<T>)await _SchoolDbContext.Students.Include(S=>S.Classes).ToListAsync();
             }
-            return _SchoolDbContext.Set<T>().ToList();
+            return await _SchoolDbContext.Set<T>().ToListAsync();
         }
 
-        public T GetById(int id)
+        public async Task<T> GetByIdAsync(int id)
         {
-            return _SchoolDbContext.Set<T>().Find(id);
+            return await _SchoolDbContext.Set<T>().FindAsync(id);
         }
-        public void Add(T Entity)
+        public async Task AddAsync(T Entity)
         {
-            _SchoolDbContext.Add(Entity);
+           await _SchoolDbContext.AddAsync(Entity);
         }
 
         public void Update(T Entity)

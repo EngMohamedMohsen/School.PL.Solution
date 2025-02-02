@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace School.DAL.Models
 {
-    public class Admin:BaseEntity
+    public class Admin : BaseEntity
     {
         public string Admin_Name { get; set; }
 
