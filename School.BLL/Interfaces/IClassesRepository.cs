@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace School.BLL.Interfaces
 {
-    public  interface IClassesRepository : IGenericRepository<Classes>
+    public interface IClassesRepository : IGenericRepository<Classes>
     {
     }
 }

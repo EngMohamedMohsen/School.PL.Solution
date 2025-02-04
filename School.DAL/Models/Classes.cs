@@ -22,7 +22,7 @@ namespace School.DAL.Models
 
         public DateTime DateOfCreation { get; set; } = DateTime.Now;
 
-        // One TO Many Relation
-        public virtual ICollection<AppUser> Students { get; set; }
+        //One TO Many Relation
+        public virtual ICollection<AppUser>? Students { get; set; }
     }
 }
