@@ -12,7 +12,7 @@ using School.DAL.Contexts;
 namespace School.DAL.Migrations
 {
     [DbContext(typeof(SchoolDbContext))]
-    [Migration("20250204174907_CreateDB")]
+    [Migration("20250204175759_CreateDB")]
     partial class CreateDB
     {
         /// <inheritdoc />
@@ -237,15 +237,15 @@ namespace School.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("ClassName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar");
-
                     b.Property<DateTime>("DateOfCreation")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDate()");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar");
 
                     b.HasKey("Id");
 

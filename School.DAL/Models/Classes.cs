@@ -13,7 +13,7 @@ namespace School.DAL.Models
     {
 
         [Required(ErrorMessage = "Name Is Required")]
-        public string? ClassName { get; set; }
+        public string Name { get; set; }
 
         public DateTime DateOfCreation { get; set; } = DateTime.Now;
 

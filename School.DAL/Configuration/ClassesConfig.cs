@@ -14,7 +14,7 @@ namespace School.DAL.Configuration
         public void Configure(EntityTypeBuilder<Classes> builder)
         {
             builder.HasKey(C => C.Id);
-            builder.Property(C=>C.ClassName).HasColumnType("nvarchar").HasMaxLength(50);
+            builder.Property(C=>C.Name).HasColumnType("nvarchar").HasMaxLength(50);
 
             builder.Property(C=>C.DateOfCreation).HasDefaultValueSql("GETDate()");
 
