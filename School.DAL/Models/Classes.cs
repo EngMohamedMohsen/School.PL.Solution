@@ -9,22 +9,20 @@ using Microsoft.AspNetCore.Identity;
 
 namespace School.DAL.Models
 {
-    public class Classes : IdentityUser
+    public class Classes : BaseEntity
     {
 
         [Required(ErrorMessage = "Code Is Required")]
-        public String C_Code { get; set; }
+        public string C_Code { get; set; }
 
         [Required(ErrorMessage = "Name Is Required")]
         public string C_Name { get; set; }
 
-        [Required(ErrorMessage = "Date Is Required")]
-        [DisplayName("Date Of Creation")]
+        public DateTime HiringDate { get; set; }
+
         public DateTime DateOfCreation { get; set; } = DateTime.Now;
 
-        // Many TO Many Relation
-        public virtual ICollection<Student> Students { get; set; }
-
-
+        // One TO Many Relation
+        public virtual ICollection<AppUser> Students { get; set; }
     }
 }

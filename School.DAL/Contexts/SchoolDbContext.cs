@@ -18,10 +18,7 @@ namespace School.DAL.Contexts
             base.OnModelCreating(modelBuilder);
         }
 
-        public DbSet<Admin> Admins { get; set; }
-        public DbSet<Teacher> Teachers { get; set; }
         public DbSet<Classes> Classes { get; set; }
-        public DbSet<Student> Students { get; set; }
 
     }
 }

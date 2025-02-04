@@ -13,9 +13,13 @@ namespace School.DAL.Configuration
     {
         public void Configure(EntityTypeBuilder<Classes> builder)
         {
+            builder.HasKey(C => C.Id);
             builder.Property(C=>C.C_Name).HasColumnName("ClassName").HasColumnType("nvarchar").HasMaxLength(50);
 
             builder.Property(C=>C.DateOfCreation).HasDefaultValueSql("GETDate()");
+
+            builder.HasMany(x => x.Students).WithOne(e => e.Classes).HasForeignKey(e => e.ClassesId);
+
 
         }
     }

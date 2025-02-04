@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace School.BLL.Repositores
 {
-    public class GenericRepository<T> : IGenericRepository<T> where T : IdentityUser
+    public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
     {
         private readonly SchoolDbContext _SchoolDbContext;
 
@@ -22,10 +22,6 @@ namespace School.BLL.Repositores
 
         public async Task<IEnumerable<T>> GetAllAsync()
         {
-            if (typeof(T)==typeof(Student))
-            {
-                return (IEnumerable<T>)await _SchoolDbContext.Students.Include(S=>S.Classes).ToListAsync();
-            }
             return await _SchoolDbContext.Set<T>().ToListAsync();
         }
 

@@ -8,14 +8,7 @@ namespace School.BLL.Interfaces
 {
     public interface IUnitOfWork
     {
-        public IAdminRepository  AdminRepository    { get;}
-
-        public IStudentRepository StudentRepository { get;}
-        
         public IClassesRepository ClassesRepository { get;}
-        
-        public ITeacherRepository TeacherRepository { get;}
-        
         Task<int> SaveDataAsync();
     }
 }

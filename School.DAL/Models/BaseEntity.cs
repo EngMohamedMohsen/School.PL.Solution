@@ -1,13 +1,14 @@
-﻿using School.DAL.Models;
+﻿using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace School.BLL.Interfaces
+namespace School.DAL.Models
 {
-    public interface IStudentRepository : IGenericRepository<Student>
+    public class BaseEntity
     {
+        public Guid Id { get; set; }
     }
 }
