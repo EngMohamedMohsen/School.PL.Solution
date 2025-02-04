@@ -14,15 +14,15 @@ namespace School.PL.Controllers
             _unitOfWork = unitOfWork;
         }
         // GET: ClassesController
-        public async Task<JsonResult> Index()
+        public async Task<IActionResult> Index()
         {
-            var allClass = await _unitOfWork.ClassesRepository.GetAllAsync();
-            return new JsonResult(new {Data=allClass});
+            var AllClass = await _unitOfWork.ClassesRepository.GetAllAsync();
+            return View(AllClass);
         }
 
 
         // GET: ClassesController/Details/5
-        public async Task<ActionResult> Details(Guid? id)
+        public async Task<IActionResult> Details(Guid? id)
         {
             if (id is null) return BadRequest(); //400
 
@@ -33,19 +33,20 @@ namespace School.PL.Controllers
                 return NotFound(); //404
             }
 
-            return new JsonResult(Cls);
+            return View(Cls);
         }
 
 
         // GET: ClassesController/Create
-        public JsonResult Create()
+        public IActionResult Create()
         {
-            return Json(new { success = true, message = "Create action accessed successfully." });
+            return View();
         }
-    
+
         // POST: ClassesController/Create
         [HttpPost]
-        public async Task<JsonResult> Create(Classes model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(Classes model)
         {
             if (ModelState.IsValid)
             {
@@ -53,88 +54,73 @@ namespace School.PL.Controllers
                 var Count = await _unitOfWork.SaveDataAsync();
                 if (Count > 0)
                 {
-                    return Json(new { success = true, message = "Class created successfully" });
-                }
-                else
-                {
-                    return Json(new { success = false, message = "Error saving the class" });
+                    return RedirectToAction(nameof(Index)); //404
                 }
             }
-
-            // If the model is invalid, return validation errors.
-            return Json(new { success = false, message = "Invalid model", errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)).ToList() });
+            return View(model);
         }
 
 
         // GET: ClassesController/Edit/5
-        public async Task<JsonResult> Update(Guid? id)
+        public async Task<IActionResult> Update(Guid? id)
         {
-            if (id is null)
+            if (id is null) return BadRequest();//400
+            var CLS = await _unitOfWork.ClassesRepository.GetByIdAsync(id.Value);
+            if (CLS is null)
             {
-                return Json(new { success = false, message = "Invalid ID", statusCode = 400 });
+                return NotFound(); //404
             }
-
-            var Cls = await _unitOfWork.ClassesRepository.GetByIdAsync(id.Value);
-
-            if (Cls is null)
-            {
-                return Json(new { success = false, message = "Class not found", statusCode = 404 });
-            }
-
-            // If the class is found, return the data.
-            return Json(new { success = true, data = Cls });
+            return View(CLS);
         }
 
 
         // POST: ClassesController/Edit/5
         [HttpPost]
-        public async Task<JsonResult> Update(Classes model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Update(Classes model)
         {
             if (ModelState.IsValid)
             {
                 _unitOfWork.ClassesRepository.Update(model);
-                var count = await _unitOfWork.SaveDataAsync();
+                var Count = await _unitOfWork.SaveDataAsync();
 
-                if (count > 0)
+                if (Count > 0)
                 {
-                    return Json(new { success = true, message = "Data updated successfully." });
+                    return RedirectToAction(nameof(Index));
                 }
             }
-            return Json(new { success = false, message = "Error occurred while updating the data." });
+            return View(model);
         }
 
 
         // GET: ClassesController/Delete/5
-        public async Task<ActionResult> Delete(Guid? id)
+        public async Task<IActionResult> Delete(Guid? Id)
         {
-            var Cls =await _unitOfWork.ClassesRepository.GetByIdAsync(id);
-            if (Cls is null) return BadRequest();
-            _unitOfWork.ClassesRepository.Delete(Cls);
-            return RedirectToAction(nameof(Index));
+            if (Id == null)
+            {
+                return BadRequest("Invalid ID provided.");
+            }
+
+            var CLS = await _unitOfWork.ClassesRepository.GetByIdAsync(Id);
+            if (CLS == null)
+            {
+                return NotFound("Class not found.");
+            }
+
+            _unitOfWork.ClassesRepository.Delete(CLS);
+            var count = await _unitOfWork.SaveDataAsync();
+
+            if (count > 0)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                // Handle case where save failed
+                return StatusCode(500, "An error occurred while deleting the class.");
+            }
         }
 
 
-        // POST: HomeController1/Delete/5
-        [HttpPost]
-        public async Task<ActionResult> Delete(Classes model)
-        {
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    _unitOfWork.ClassesRepository.Delete(model);
-                    var Count =await _unitOfWork.SaveDataAsync();
-                    if (Count > 0)
-                    {
-                        return RedirectToAction(nameof(Index));
-                    }
-                }
-            }
-            catch(Exception ex)
-            {
-                ModelState.AddModelError(string.Empty, ex.Message);
-            }
-            return View(model);
-        }
     }
 }

@@ -12,13 +12,8 @@ namespace School.DAL.Models
     public class Classes : BaseEntity
     {
 
-        [Required(ErrorMessage = "Code Is Required")]
-        public string C_Code { get; set; }
-
         [Required(ErrorMessage = "Name Is Required")]
-        public string C_Name { get; set; }
-
-        public DateTime HiringDate { get; set; }
+        public string? ClassName { get; set; }
 
         public DateTime DateOfCreation { get; set; } = DateTime.Now;
 

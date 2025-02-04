@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using School.BLL.Interfaces;
 using School.BLL.Repositores;
 using School.DAL.Contexts;
+using School.DAL.Models;
 using System;
 
 namespace School.PL
@@ -18,6 +20,20 @@ namespace School.PL
 
             builder.Services.AddDbContext<SchoolDbContext>(options => {options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionString"));});//Allow DI For AppDbContext
             builder.Services.AddScoped<IUnitOfWork,UnitOfWork>(); // Allow Dependency Injection For UnitOfWork Service
+            builder.Services.AddIdentity<AppUser, IdentityRole>(config =>
+            {
+                config.Password.RequiredUniqueChars = 2;
+                config.Password.RequireDigit = true;
+                config.Password.RequireLowercase = true;
+                config.Password.RequireUppercase = true;
+                config.Password.RequireNonAlphanumeric = true;
+                config.User.RequireUniqueEmail = true;
+                config.Lockout.AllowedForNewUsers = true;
+                config.Lockout.MaxFailedAccessAttempts = 3;
+                config.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromHours(1);
+
+            }).AddEntityFrameworkStores<SchoolDbContext>()
+              .AddDefaultTokenProviders();
 
             var app = builder.Build();
 

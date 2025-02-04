@@ -234,23 +234,15 @@ namespace School.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("C_Code")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("C_Name")
+                    b.Property<string>("ClassName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar")
-                        .HasColumnName("ClassName");
+                        .HasColumnType("nvarchar");
 
                     b.Property<DateTime>("DateOfCreation")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDate()");
-
-                    b.Property<DateTime>("HiringDate")
-                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
