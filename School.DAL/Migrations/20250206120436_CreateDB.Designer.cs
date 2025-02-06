@@ -12,7 +12,7 @@ using School.DAL.Contexts;
 namespace School.DAL.Migrations
 {
     [DbContext(typeof(SchoolDbContext))]
-    [Migration("20250204175759_CreateDB")]
+    [Migration("20250206120436_CreateDB")]
     partial class CreateDB
     {
         /// <inheritdoc />
@@ -180,6 +180,9 @@ namespace School.DAL.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("ISAgree")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
@@ -208,9 +211,6 @@ namespace School.DAL.Migrations
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)

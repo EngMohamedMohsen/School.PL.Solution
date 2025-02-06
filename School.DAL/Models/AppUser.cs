@@ -7,16 +7,9 @@ using System.Threading.Tasks;
 
 namespace School.DAL.Models
 {
-    public enum UserType
-    {
-        Admin,
-        Teacher,
-        Student
-    };
     public class AppUser : IdentityUser
     {
-        public UserType Type {get; set;}
-
+        public bool ISAgree { get; set; }
         public Guid? ClassesId { get; set;}
 
         public Classes? Classes {get; set;}
