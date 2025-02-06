@@ -18,22 +18,10 @@ namespace School.PL
             builder.Services.AddControllersWithViews();
 
 
-            builder.Services.AddDbContext<SchoolDbContext>(options => {options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionString"));});//Allow DI For AppDbContext
-            builder.Services.AddScoped<IUnitOfWork,UnitOfWork>(); // Allow Dependency Injection For UnitOfWork Service
-            builder.Services.AddIdentity<AppUser, IdentityRole>(config =>
-            {
-                config.Password.RequiredUniqueChars = 2;
-                config.Password.RequireDigit = true;
-                config.Password.RequireLowercase = true;
-                config.Password.RequireUppercase = true;
-                config.Password.RequireNonAlphanumeric = true;
-                config.User.RequireUniqueEmail = true;
-                config.Lockout.AllowedForNewUsers = true;
-                config.Lockout.MaxFailedAccessAttempts = 3;
-                config.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromHours(1);
+            builder.Services.AddDbContext<SchoolDbContext>(options =>
+            {options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionString"));});//Allow DI For AppDbContext
 
-            }).AddEntityFrameworkStores<SchoolDbContext>()
-              .AddDefaultTokenProviders();
+            builder.Services.AddScoped<IUnitOfWork,UnitOfWork>(); // Allow Dependency Injection For UnitOfWork Service
 
             var app = builder.Build();
 
@@ -50,7 +38,6 @@ namespace School.PL
 
             app.UseRouting();
 
-            app.UseAuthorization();
 
             app.MapControllerRoute(
                 name: "default",
