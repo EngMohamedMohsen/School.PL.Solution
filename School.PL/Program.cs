@@ -23,6 +23,8 @@ namespace School.PL
 
             builder.Services.AddScoped<IUnitOfWork,UnitOfWork>(); // Allow Dependency Injection For UnitOfWork Service
 
+            builder.Services.AddIdentity<AppUser,IdentityRole>().AddEntityFrameworkStores<SchoolDbContext>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
