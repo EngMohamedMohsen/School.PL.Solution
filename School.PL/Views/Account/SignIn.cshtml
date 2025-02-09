@@ -1,0 +1,35 @@
+﻿@model SignInViewModel
+@{
+    ViewData["title"] = "SignUp";
+    Layout = "~/Views/Shared/_AccountLayout.cshtml";
+}
+
+<div class="grid">
+    <h3>SignIn Form</h3>
+    <div asp-validation-summary="All"></div>
+    <form asp-action="SignIN" class="form login">
+
+        <div class="form__field">
+            <input class="form__input" asp-for="Email" placeholder="Email" required>
+        </div>
+        <div class="form__field">
+            <input class="form__input" asp-for="Password" placeholder="Password" required>
+        </div>
+
+        <div class="wthree-text">
+            <label class="anim">
+                <input type="checkbox" asp-for="RememberMe" class="checkbox" />
+                <span>Remember Me</span>
+            </label>
+            <div class="clear"></div>
+        </div>
+
+        <div class="form__field">
+            <input type="submit" value="SIGN IN">
+        </div>
+
+    </form>
+    <p class="text--center">
+        Not a member? <a asp-action="SignUp">Register now!</a>
+    </p>
+</div>

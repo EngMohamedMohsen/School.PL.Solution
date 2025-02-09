@@ -15,6 +15,7 @@ namespace School.PL.Controllers
             _userManager = userManager;
             _signInManager = signInManager;
         }
+        #region SignUp
         [HttpGet]
         public IActionResult SignUp()
         {
@@ -62,7 +63,9 @@ namespace School.PL.Controllers
             }
             return View(model);
         }
+        #endregion
 
+        #region SignIn
         [HttpGet]
         public IActionResult SignIn()
         {
@@ -72,29 +75,41 @@ namespace School.PL.Controllers
 
         [HttpPost]
 
-        //public async Task<IActionResult> SignIn(LoginViewModel model)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        var user = await _userManager.FindByEmailAsync(model.Email);
-        //        if (user is not null)
-        //        {
-        //            var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, lockoutOnFailure: false);
-        //            if (result.Succeeded)
-        //            {
-        //                return RedirectToAction("Index", "Home");
+        public async Task<IActionResult> SignIn(SignInViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    // Check Email Valid
+                    var user = await _userManager.FindByEmailAsync(model.Email);
+                    if (user != null)
+                    {
+                        // Check Password Valid
+                        var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, lockoutOnFailure: false);
+                        if (result.Succeeded)
+                        {
+                            return RedirectToAction("Index", "Home");
+                        }
 
-        //            }
+                        ModelState.AddModelError("", "Login Failed");
+                        return View(model);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                }
+            }
 
-        //            ModelState.AddModelError("", "Login Failed");
-        //            return View(model);
-        //        }
-        //    }
+            return View(model);
+        }
 
-        //    return View(model);
-        //}
 
-        public async Task<IActionResult> SignOut()
+        #endregion
+
+
+        public new async Task<IActionResult> SignOut()
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction(nameof(SignIn));

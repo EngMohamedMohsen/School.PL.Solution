@@ -1,0 +1,26 @@
+﻿@model AppUser
+@{
+    ViewData["Title"] = "Assign User to Class";
+}
+
+<h2>Assign User to Class</h2>
+
+<form asp-action="AssignToClass" method="post">
+    <div class="form-group">
+        <label for="userId">User</label>
+        <input type="text" name="userId" class="form-control" placeholder="Enter User ID" required />
+    </div>
+    <div class="form-group">
+        <label for="classId">Class</label>
+        <select name="classId" class="form-control">
+            <option value="">--Select Class--</option>
+            @foreach (var classItem in ViewData["Classes"] as SelectList)
+            {
+                <option value="@classItem.Value">@classItem.Text</option>
+            }
+        </select>
+    </div>
+    <br />
+    <button type="submit" class="btn btn-primary">Assign</button>
+    <a asp-action="Index">Back to List</a>
+</form>
