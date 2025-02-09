@@ -12,7 +12,7 @@
     </div>
     <div class="form-group">
         <label for="classId">Class</label>
-        <select name="classId" class="form-control">
+        <select name="classId" class="form-control" required>
             <option value="">--Select Class--</option>
             @foreach (var classItem in ViewData["Classes"] as SelectList)
             {

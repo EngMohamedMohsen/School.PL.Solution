@@ -163,38 +163,41 @@ namespace School.PL.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AssignToClass(string userId, Guid? classId)
+        public async Task<IActionResult> AssignToClass(Guid? userId, Guid? classId)
         {
-            if (string.IsNullOrEmpty(userId) || classId is null)
+            try
             {
-                ModelState.AddModelError(string.Empty, "Invalid user or class.");
-                return View();
-            }
+                if (userId is null || classId is null)
+                {
+                    ModelState.AddModelError(string.Empty, "Invalid user or class.");
+                    return View();
+                }
 
-            // Fetch the user by userId
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
+                // Fetch the user by userId
+                var user = await _userManager.FindByIdAsync(userId.ToString());
+                // Check userId Valid !!
+                if (user == null)
+                {
+                    ModelState.AddModelError(string.Empty, "User not found.");
+                    return View();
+                }
+
+                // Fetch the class by classId
+                var selectedClass = await _unitOfWork.ClassesRepository.GetByIdAsync(classId);
+
+                // Assign user to the class
+                user.Classes = selectedClass;
+
+                // Save changes to the database
+                await _unitOfWork.SaveDataAsync();
+
+                // Redirect to a success page or any other desired page
+                return RedirectToAction(nameof(Success));
+            }
+            catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, "User not found.");
-                return View();
+                ModelState.AddModelError(string.Empty, ex.Message);
             }
-
-            // Fetch the class by classId
-            var selectedClass = await _unitOfWork.ClassesRepository.GetByIdAsync(classId);
-            if (selectedClass == null)
-            {
-                ModelState.AddModelError(string.Empty, "Class not found.");
-                return View();
-            }
-
-            // Assign user to the class
-            user.Classes = selectedClass;
-
-            // Save changes to the database
-            await _unitOfWork.SaveDataAsync();
-
-            // Redirect to a success page or any other desired page
-            return RedirectToAction(nameof(Success));
         }
 
         // A simple success view after assignment
