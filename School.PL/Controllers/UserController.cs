@@ -197,6 +197,7 @@ namespace School.PL.Controllers
             catch (Exception ex)
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
+                return View();
             }
         }
 
