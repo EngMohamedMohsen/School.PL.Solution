@@ -4,6 +4,7 @@ using School.BLL.Interfaces;
 using School.BLL.Repositores;
 using School.DAL.Contexts;
 using School.DAL.Models;
+using School.PL.Services;
 using System;
 
 namespace School.PL
@@ -22,6 +23,8 @@ namespace School.PL
             {options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionString"));});//Allow DI For AppDbContext
 
             builder.Services.AddScoped<IUnitOfWork,UnitOfWork>(); // Allow Dependency Injection For UnitOfWork Service
+            builder.Services.AddScoped<IClassesServices,ClassesServices>(); // Allow Dependency Injection For UnitOfWork Service
+            builder.Services.AddScoped<IUserServices,UserServices>(); // Allow Dependency Injection For UnitOfWork Service
 
             builder.Services.AddIdentity<AppUser,IdentityRole>().AddEntityFrameworkStores<SchoolDbContext>();
 

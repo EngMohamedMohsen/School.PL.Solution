@@ -2,31 +2,33 @@
 using Microsoft.AspNetCore.Mvc;
 using School.BLL.Interfaces;
 using School.DAL.Models;
+using School.PL.Models;
+using School.PL.Services;
 
 namespace School.PL.Controllers
 {
     public class ClassesController : Controller
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IClassesServices _classesServices;
 
-        public ClassesController(IUnitOfWork unitOfWork)
+        public ClassesController(IClassesServices classesServices)
         {
-            _unitOfWork = unitOfWork;
+            _classesServices = classesServices;
         }
         // GET: ClassesController
         public async Task<IActionResult> Index()
         {
-            var AllClass = await _unitOfWork.ClassesRepository.GetAllAsync();
+            //var AllClass = await _unitOfWork.ClassesRepository.GetAllAsync();
+            var AllClass = await _classesServices.GetAllClassAsync();
             return View(AllClass);
         }
-
 
         // GET: ClassesController/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id is null) return BadRequest(); //400
 
-            var Cls = await _unitOfWork.ClassesRepository.GetByIdAsync(id.Value);
+            var Cls = await _classesServices.GetIdClassRoomAsync(id.Value);
 
             if (Cls is null)
             {
@@ -45,17 +47,13 @@ namespace School.PL.Controllers
 
         // POST: ClassesController/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Classes model)
+        public async Task<IActionResult> Create(ClassRoomViewModel model)
         {
             if (ModelState.IsValid)
             {
-                await _unitOfWork.ClassesRepository.AddAsync(model);
-                var Count = await _unitOfWork.SaveDataAsync();
-                if (Count > 0)
-                {
-                    return RedirectToAction(nameof(Index)); //404
-                }
+                await _classesServices.CreateClassRoomAsync(model);
+                await _classesServices.SaveData();
+               return RedirectToAction(nameof(Index)); //404
             }
             return View(model);
         }
@@ -65,7 +63,7 @@ namespace School.PL.Controllers
         public async Task<IActionResult> Update(Guid? id)
         {
             if (id is null) return BadRequest();//400
-            var CLS = await _unitOfWork.ClassesRepository.GetByIdAsync(id.Value);
+            var CLS = await _classesServices.GetIdClassRoomAsync(id.Value);
             if (CLS is null)
             {
                 return NotFound(); //404
@@ -76,18 +74,13 @@ namespace School.PL.Controllers
 
         // POST: ClassesController/Edit/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Update(Classes model)
+        public async Task<IActionResult> Update(ClassRoomViewModel model)
         {
             if (ModelState.IsValid)
             {
-                _unitOfWork.ClassesRepository.Update(model);
-                var Count = await _unitOfWork.SaveDataAsync();
-
-                if (Count > 0)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
+                await _classesServices.UpdateClassRoom(model);
+                await _classesServices.SaveData();
+                return RedirectToAction(nameof(Index));
             }
             return View(model);
         }
@@ -101,26 +94,32 @@ namespace School.PL.Controllers
                 return BadRequest("Invalid ID provided.");
             }
 
-            var CLS = await _unitOfWork.ClassesRepository.GetByIdAsync(Id);
+            // Get the class object using the provided ID.
+            var CLS = await _classesServices.GetIdClassRoomAsync(Id);
+
+            // Check if the class was found.
             if (CLS == null)
             {
-                return NotFound("Class not found.");
+                return NotFound($"Classroom with ID {Id} not found.");
             }
 
-            _unitOfWork.ClassesRepository.Delete(CLS);
-            var count = await _unitOfWork.SaveDataAsync();
+            // Delete the class.
+            await _classesServices.DeleteClassRoom(CLS);
 
-            if (count > 0)
+            // Save changes (optional: handle exceptions here for better user feedback).
+            try
             {
-                return RedirectToAction(nameof(Index));
+                await _classesServices.SaveData();
             }
-            else
+            catch (Exception ex)
             {
-                // Handle case where save failed
-                return StatusCode(500, "An error occurred while deleting the class.");
+                // Handle exception (you can log it or return a failure message).
+                return StatusCode(500, "An error occurred while saving data: " + ex.Message);
             }
+
+            // Redirect to the Index page after deletion.
+            return RedirectToAction(nameof(Index));
         }
-
 
     }
 }
