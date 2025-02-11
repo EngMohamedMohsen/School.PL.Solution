@@ -26,7 +26,22 @@ namespace School.PL
             builder.Services.AddScoped<IClassesServices,ClassesServices>(); // Allow Dependency Injection For UnitOfWork Service
             builder.Services.AddScoped<IUserServices,UserServices>(); // Allow Dependency Injection For UnitOfWork Service
 
-            builder.Services.AddIdentity<AppUser,IdentityRole>().AddEntityFrameworkStores<SchoolDbContext>();
+            builder.Services.AddIdentity<AppUser,IdentityRole>()
+                            .AddEntityFrameworkStores<SchoolDbContext>()
+                            .AddDefaultTokenProviders();
+
+            builder.Services.ConfigureApplicationCookie(X =>
+            {
+                X.Cookie.HttpOnly = true;
+                X.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+                X.SlidingExpiration = true;
+                X.LoginPath = "/Account/SignIn";
+                X.LogoutPath = "/Account/SignOut";
+                X.AccessDeniedPath = "/Account/AccessDenied";
+                X.Cookie.SecurePolicy= CookieSecurePolicy.Always;
+                X.Cookie.SameSite = SameSiteMode.Strict;
+
+            });
 
             var app = builder.Build();
 
@@ -38,15 +53,18 @@ namespace School.PL
                 app.UseHsts();
             }
 
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
 
+            app.UseAuthorization();
+            app.UseAuthentication();
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Account}/{action=SignIn}/{id?}");
 
             app.Run();
         }

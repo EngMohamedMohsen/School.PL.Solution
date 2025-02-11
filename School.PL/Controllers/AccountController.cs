@@ -74,7 +74,6 @@ namespace School.PL.Controllers
         }
 
         [HttpPost]
-
         public async Task<IActionResult> SignIn(SignInViewModel model)
         {
             if (ModelState.IsValid)
@@ -86,10 +85,15 @@ namespace School.PL.Controllers
                     if (user != null)
                     {
                         // Check Password Valid
-                        var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, lockoutOnFailure: false);
-                        if (result.Succeeded)
+                        var Flag = await _userManager.CheckPasswordAsync(user, model.Password);
+                        if (Flag)
                         {
-                            return RedirectToAction("Index", "Home");
+                            var Result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false);
+                            if (Result.Succeeded)
+                            {
+                                return RedirectToAction("Index", "Home");
+
+                            }
                         }
 
                         ModelState.AddModelError("", "Login Failed");

@@ -7,7 +7,7 @@
 <div class="grid">
     <h3>SignIn Form</h3>
     <div asp-validation-summary="All"></div>
-    <form asp-action="SignIN" class="form login">
+    <form asp-action="SignIN" method="post" class="form login">
 
         <div class="form__field">
             <input class="form__input" asp-for="Email" placeholder="Email" required>
