@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using School.BLL.Interfaces;
 using School.DAL.Contexts;
 using School.DAL.Models;
+using School.PL.CustomAttributes;
 using School.PL.Models.UserView;
 using School.PL.Services;
 
@@ -215,7 +216,8 @@ namespace School.PL.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
+        [CustomAuthorize("Admin")]
         public async Task<IActionResult> AssignToClassAsync()
         {
             var classes = await _classesServices.GetAllClassAsync();
