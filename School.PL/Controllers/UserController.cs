@@ -1,18 +1,12 @@
-﻿
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using School.BLL.Interfaces;
-using School.DAL.Contexts;
-using School.DAL.Models;
-using School.PL.CustomAttributes;
+using School.PL.Helper.CustomAttributes;
+using School.PL.Helper.Services;
 using School.PL.Models.UserView;
-using School.PL.Services;
 
 namespace School.PL.Controllers
 {
+    [CustomAuthorize("Admin")]
     public class UserController : Controller
     {
         private readonly IUserServices _userServices;
@@ -25,6 +19,8 @@ namespace School.PL.Controllers
             _userServices = userServices;
             _classesServices = classesServices;
         }
+
+        // GET: UserController/Index
         public async Task<IActionResult> Index(string searchInput)
         {
             #region Index
@@ -57,6 +53,7 @@ namespace School.PL.Controllers
             return View(user);
         }
 
+        // GET: UserController/Details
         public async Task<IActionResult> Details(Guid? id, string viewname = "Details")
         {
             if (id == null)
@@ -102,12 +99,15 @@ namespace School.PL.Controllers
 
         }
 
+        // GET: UserController/Update
         [HttpGet]
         public async Task<IActionResult> Update(Guid? id)
         {
             return await Details(id, "Update");
 
         }
+
+        // POST: UserController/Update
         [HttpPost]
         public async Task<IActionResult> Update(Guid? id, UserUpdateViewModel appUserUpdate)
         {
@@ -185,6 +185,7 @@ namespace School.PL.Controllers
             return View(appUserUpdate);
         }
 
+        // GET: UserController/Delete
         public async Task<IActionResult> Delete(Guid id)
         {
             await _userServices.DeleteUserAsync(id);
@@ -215,8 +216,8 @@ namespace School.PL.Controllers
             #endregion
         }
 
+        // GET: UserController/AssignToClassAsync
         [HttpGet]
-        [Authorize(Roles = "Admin")]
         [CustomAuthorize("Admin")]
         public async Task<IActionResult> AssignToClassAsync()
         {
@@ -225,6 +226,7 @@ namespace School.PL.Controllers
             return View();
         }
 
+        // POST: UserController/AssignToClassAsync
         [HttpPost]
         public async Task<IActionResult> AssignToClass(Guid? userId, Guid? classId)
         {

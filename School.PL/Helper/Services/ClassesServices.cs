@@ -2,7 +2,7 @@
 using School.DAL.Models;
 using School.PL.Models;
 
-namespace School.PL.Services
+namespace School.PL.Helper.Services
 {
     public class ClassesServices : IClassesServices
     {
@@ -11,7 +11,7 @@ namespace School.PL.Services
         public ClassesServices(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-        } 
+        }
 
         public async Task<IEnumerable<ClassRoomViewModel>> GetAllClassAsync()
         {
@@ -20,8 +20,8 @@ namespace School.PL.Services
             // Manually map the Class entities to ClassRoomViewModel
             var classRoomViewModels = classes.Select(c => new ClassRoomViewModel
             {
-                Id=c.Id,
-                Name=c.Name,
+                Id = c.Id,
+                Name = c.Name,
             });
 
             return classRoomViewModels;
@@ -47,10 +47,10 @@ namespace School.PL.Services
 
             return classRoomViewModel;
         }
-            //public async Task<ClassRoomViewModel> GetIdClassRoomAsync(Guid? Id)
-            //{
-            //    return await _unitOfWork.ClassesRepository.GetByIdAsync(Id.Value);
-            //}
+        //public async Task<ClassRoomViewModel> GetIdClassRoomAsync(Guid? Id)
+        //{
+        //    return await _unitOfWork.ClassesRepository.GetByIdAsync(Id.Value);
+        //}
 
         public async Task CreateClassRoomAsync(ClassRoomViewModel model)
         {

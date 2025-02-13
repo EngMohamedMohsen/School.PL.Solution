@@ -4,7 +4,7 @@ using School.BLL.Interfaces;
 using School.BLL.Repositores;
 using School.DAL.Contexts;
 using School.DAL.Models;
-using School.PL.Services;
+using School.PL.Helper.Services;
 using System;
 
 namespace School.PL
@@ -32,15 +32,9 @@ namespace School.PL
 
             builder.Services.ConfigureApplicationCookie(X =>
             {
-                X.Cookie.HttpOnly = true;
-                X.ExpireTimeSpan = TimeSpan.FromMinutes(60);
-                X.SlidingExpiration = true;
                 X.LoginPath = "/Account/SignIn";
                 X.LogoutPath = "/Account/SignOut";
                 X.AccessDeniedPath = "/Account/AccessDenied";
-                X.Cookie.SecurePolicy= CookieSecurePolicy.Always;
-                X.Cookie.SameSite = SameSiteMode.Strict;
-
             });
 
             var app = builder.Build();
@@ -64,7 +58,7 @@ namespace School.PL
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Account}/{action=SignIn}/{id?}");
+                pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.Run();
         }

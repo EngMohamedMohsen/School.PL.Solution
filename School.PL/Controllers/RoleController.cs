@@ -2,11 +2,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using School.DAL.Models;
+using School.PL.Helper.CustomAttributes;
 using School.PL.Models.RoleView;
-using School.PL.Models.UserView;
 
 namespace School.PL.Controllers
 {
+    [CustomAuthorize("Admin")]
     public class RoleController : Controller
     {
         private readonly RoleManager<IdentityRole> _roleManager;
@@ -19,6 +20,8 @@ namespace School.PL.Controllers
             _logger = logger;
             _userManager = userManager;
         }
+
+        // GET: RoleController/Index
         public async Task<IActionResult> Index(string searchInput)
         {
             var Role=Enumerable.Empty<RoleViewModel>();
@@ -44,6 +47,7 @@ namespace School.PL.Controllers
             return View(Role);
         }
 
+        // GET: RoleController/Details
         [HttpGet]
         public async Task<IActionResult> Details(Guid? id, string viewname = "Details")
         {
@@ -65,12 +69,14 @@ namespace School.PL.Controllers
             return View(viewname, Role); 
         }
 
+        // GET: RoleController/Create
         [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
+        // POST: RoleController/Create
         [HttpPost]
         public async Task<IActionResult> Create(RoleViewModel model)
         {
@@ -86,6 +92,7 @@ namespace School.PL.Controllers
             return View();
         }
 
+        // GET: RoleController/Update
         [HttpGet]
         public async Task<IActionResult> Update(Guid? id)
         {
@@ -93,6 +100,7 @@ namespace School.PL.Controllers
 
         }
 
+        // POST: RoleController/Update
         [HttpPost]
         public async Task<IActionResult> Update(Guid? id, RoleViewModel roleViewModel)
         {
@@ -137,6 +145,7 @@ namespace School.PL.Controllers
             return View(roleViewModel);
         }
 
+        // GET: RoleController/Delete
         public async Task<IActionResult> Delete(Guid? id)
         {
             try
@@ -168,6 +177,7 @@ namespace School.PL.Controllers
 
         }
 
+        // GET: RoleController/AddOrRemoveUsers
         [HttpGet]
         public async Task<IActionResult> AddOrRemoveUsers(Guid? roleId)
         {
@@ -198,6 +208,8 @@ namespace School.PL.Controllers
             }
             return View(usersInRole);
         }
+
+        // POST: RoleController/AddOrRemoveUsers
         [HttpPost]
         public async Task<IActionResult> AddOrRemoveUsers(Guid? roleId, List<UserInRoleViewModel> users)
         {

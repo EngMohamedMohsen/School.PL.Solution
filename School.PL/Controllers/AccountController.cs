@@ -88,35 +88,37 @@ namespace School.PL.Controllers
                         var Flag = await _userManager.CheckPasswordAsync(user, model.Password);
                         if (Flag)
                         {
-                            var Result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false);
+                            var Result = await _signInManager.PasswordSignInAsync
+                                (user, model.Password, model.RememberMe, false
+                                ); // Generate Token for this user sign in 
                             if (Result.Succeeded)
                             {
                                 return RedirectToAction("Index", "Home");
-
                             }
                         }
-
-                        ModelState.AddModelError("", "Login Failed");
-                        return View(model);
                     }
+                        ModelState.AddModelError("", "Login Failed");
                 }
                 catch (Exception ex)
                 {
                     ModelState.AddModelError(string.Empty, ex.Message);
                 }
             }
-
             return View(model);
         }
-
-
         #endregion
-
 
         public new async Task<IActionResult> SignOut()
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction(nameof(SignIn));
+            //return RedirectToAction("Index", "Home");
+
+        }
+
+        public IActionResult AccessDenied()
+        {
+            return View();
         }
     }
 }

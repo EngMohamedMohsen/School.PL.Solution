@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using School.BLL.Interfaces;
-using School.DAL.Models;
+using School.PL.Helper.CustomAttributes;
+using School.PL.Helper.Services;
 using School.PL.Models;
-using School.PL.Services;
 
 namespace School.PL.Controllers
 {
+    [CustomAuthorize("Admin")]
     public class ClassesController : Controller
     {
         private readonly IClassesServices _classesServices;
@@ -15,6 +15,7 @@ namespace School.PL.Controllers
         {
             _classesServices = classesServices;
         }
+
         // GET: ClassesController
         public async Task<IActionResult> Index()
         {
@@ -38,7 +39,6 @@ namespace School.PL.Controllers
             return View(Cls);
         }
 
-
         // GET: ClassesController/Create
         public IActionResult Create()
         {
@@ -58,7 +58,6 @@ namespace School.PL.Controllers
             return View(model);
         }
 
-
         // GET: ClassesController/Edit/5
         public async Task<IActionResult> Update(Guid? id)
         {
@@ -70,7 +69,6 @@ namespace School.PL.Controllers
             }
             return View(CLS);
         }
-
 
         // POST: ClassesController/Edit/5
         [HttpPost]
@@ -84,7 +82,6 @@ namespace School.PL.Controllers
             }
             return View(model);
         }
-
 
         // GET: ClassesController/Delete/5
         public async Task<IActionResult> Delete(Guid? Id)

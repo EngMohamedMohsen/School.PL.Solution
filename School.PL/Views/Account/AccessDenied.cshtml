@@ -1,0 +1,126 @@
+﻿@{
+    Layout = "";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restricted Page</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+  <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #222;
+            color: #fff;
+            position: relative;
+        }
+
+        .container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .content {
+            background-color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        button {
+            background-color: #ff4444;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+            button:hover {
+                background-color: #ff3333;
+            }
+        /* Hide the SVG initially */
+        #warningSvg {
+            position: absolute;
+            display: none;
+            width: 50px;
+            height: 50px;
+            fill: red;
+        }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="content">
+      <h1>Access Denied!</h1>
+       <h3 class="w3-center w3-animate-zoom">🚫🚫🚫🚫</h3>
+      <p>You don't have permission to view this site.</p>
+      <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Homepage</a>
+    </div>
+  </div>
+
+  <!-- SVG for warning -->
+  <svg id="warningSvg" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-triangle" viewBox="0 0 16 16">
+    <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.15.15 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.2.2 0 0 1-.054.06.1.1 0 0 1-.066.017H1.146a.1.1 0 0 1-.066-.017.2.2 0 0 1-.054-.06.18.18 0 0 1 .002-.183L7.884 2.073a.15.15 0 0 1 .054-.057m1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767z"/>
+    <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"/>
+  </svg>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+  <script>
+        // Animation for warning SVG
+        const warningSvg = document.getElementById('warningSvg');
+
+        // Function to generate a random number between min and max
+        function randomBetween(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        // Function to animate the warning SVG
+        function animateWarning() {
+            // Set initial position
+            warningSvg.style.display = 'block';
+            warningSvg.style.opacity = '0';
+            warningSvg.style.left = `${randomBetween(10, 90)}vw`;
+            warningSvg.style.top = `${randomBetween(10, 90)}vh`;
+
+            // Fade in and move to a new random position
+            anime({
+                targets: warningSvg,
+                opacity: 1,
+                translateX: `${randomBetween(-50, 50)}px`,
+                translateY: `${randomBetween(-50, 50)}px`,
+                duration: 1000,
+                easing: 'easeInOutQuad',
+                complete: function () {
+                    // Fade out and reset after a delay
+                    anime({
+                        targets: warningSvg,
+                        opacity: 0,
+                        duration: 1000,
+                        easing: 'easeInOutQuad',
+                        delay: 2000,
+                        complete: function () {
+                            warningSvg.style.display = 'none';
+                            setTimeout(animateWarning, 3000); // Repeat after a delay
+                        }
+                    });
+                }
+            });
+        }
+
+        // Start the animation
+        animateWarning();
+  </script>
+</body>
+</html>
+
+

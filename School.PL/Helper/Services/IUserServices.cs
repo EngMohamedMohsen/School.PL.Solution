@@ -2,7 +2,7 @@
 using School.DAL.Models;
 using School.PL.Models.UserView;
 
-namespace School.PL.Services
+namespace School.PL.Helper.Services
 {
     public interface IUserServices
     {

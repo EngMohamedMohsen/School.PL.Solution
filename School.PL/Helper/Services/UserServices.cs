@@ -5,7 +5,7 @@ using School.DAL.Models;
 using School.PL.Controllers;
 using School.PL.Models.UserView;
 
-namespace School.PL.Services
+namespace School.PL.Helper.Services
 {
     public class UserServices : IUserServices
     {
@@ -56,19 +56,19 @@ namespace School.PL.Services
 
         public async Task<IdentityResult> UpdateUserAsync(Guid id, UserUpdateViewModel appUserUpdate)
         {
-            
-                var user = await _userManager.FindByIdAsync(id.ToString());
-                if (user == null)
-                {
-                    _logger.LogWarning("User not found with id: {id}", id);
-                    return IdentityResult.Failed(new IdentityError { Description = "User not found" });
-                }
 
-                user.UserName = appUserUpdate.UserName;
-                user.NormalizedUserName = appUserUpdate.UserName.ToUpper();
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            if (user == null)
+            {
+                _logger.LogWarning("User not found with id: {id}", id);
+                return IdentityResult.Failed(new IdentityError { Description = "User not found" });
+            }
 
-                return await _userManager.UpdateAsync(user);
-            
+            user.UserName = appUserUpdate.UserName;
+            user.NormalizedUserName = appUserUpdate.UserName.ToUpper();
+
+            return await _userManager.UpdateAsync(user);
+
         }
 
         public async Task<UserUpdateViewModel> GetUserUpdateViewModelAsync(Guid id)

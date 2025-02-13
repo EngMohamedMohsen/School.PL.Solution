@@ -1,7 +1,6 @@
-﻿using School.DAL.Models;
-using School.PL.Models;
+﻿using School.PL.Models;
 
-namespace School.PL.Services
+namespace School.PL.Helper.Services
 {
     public interface IClassesServices
     {

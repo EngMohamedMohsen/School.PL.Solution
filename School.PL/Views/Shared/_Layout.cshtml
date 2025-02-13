@@ -26,25 +26,36 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Classes" asp-action="Index">Classes</a>
-                        </li>
-                        @if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
-                        {
+                    </ul>
+                    @if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+                    {
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Classes" asp-action="Index">Classes</a>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Index">Users</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Role" asp-action="Index">Roles</a>
                             </li>
-                        }
-                    </ul>
+                        </ul>
+                    }
                     @if (signInManager.IsSignedIn(User))
                     {
                         <ul class="navbar-nav">
                             <li class="nav-item">
                                 <form method="post" asp-controller="Account" asp-action="SignOut">
                                     <button type="submit" class="nav-link btn btn-danger text-white">Sign Out</button>
+                                </form>
+                            </li>
+                        </ul>
+                    }else
+                    {
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <form  asp-controller="Account" asp-action="SignIn">
+                                    <button type="submit" class="nav-link btn btn-danger text-white">SignIn</button>
                                 </form>
                             </li>
                         </ul>
