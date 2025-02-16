@@ -110,36 +110,25 @@ namespace School.PL.Controllers
             }
             if (ModelState.IsValid)
             {
-                try
+                var Role = await _roleManager.FindByIdAsync(id.ToString());
+                if (Role is null)
                 {
-                    var Role = await _roleManager.FindByIdAsync(id.ToString());
-                    if (Role is null)
-                    {
-                        return NotFound();
-                    }
-                    Role.Name = roleViewModel.RoleName;
-                    Role.NormalizedName = roleViewModel.RoleName.ToUpper();
-                    var res = await _roleManager.UpdateAsync(Role);
-                    if (res.Succeeded)
-                    {
-                        _logger.LogInformation("user updated successfully");
-                        return RedirectToAction(nameof(Index));
-                    }
-                    else
-                    {
-                        _logger.LogInformation("user updated Failed");
-                        return View(roleViewModel);
-
-                    }
-
+                    return NotFound();
+                }
+                Role.Name = roleViewModel.RoleName;
+                Role.NormalizedName = roleViewModel.RoleName.ToUpper();
+                var res = await _roleManager.UpdateAsync(Role);
+                if (res.Succeeded)
+                {
+                    _logger.LogInformation("user updated successfully");
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    _logger.LogInformation("user updated Failed");
+                    return View(roleViewModel);
 
                 }
-                catch (Exception ex)
-                {
-                    _logger.LogInformation(ex.Message);
-
-                }
-
             }
 
             return View(roleViewModel);

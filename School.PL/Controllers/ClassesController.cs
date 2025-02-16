@@ -104,15 +104,7 @@ namespace School.PL.Controllers
             await _classesServices.DeleteClassRoom(CLS);
 
             // Save changes (optional: handle exceptions here for better user feedback).
-            try
-            {
-                await _classesServices.SaveData();
-            }
-            catch (Exception ex)
-            {
-                // Handle exception (you can log it or return a failure message).
-                return StatusCode(500, "An error occurred while saving data: " + ex.Message);
-            }
+            await _classesServices.SaveData();
 
             // Redirect to the Index page after deletion.
             return RedirectToAction(nameof(Index));

@@ -4,6 +4,7 @@ using School.BLL.Interfaces;
 using School.BLL.Repositores;
 using School.DAL.Contexts;
 using School.DAL.Models;
+using School.PL.Helper.CustomMiddleWare;
 using School.PL.Helper.Services;
 using System;
 
@@ -36,7 +37,6 @@ namespace School.PL
                 X.LogoutPath = "/Account/SignOut";
                 X.AccessDeniedPath = "/Account/AccessDenied";
             });
-
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -46,8 +46,7 @@ namespace School.PL
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
-
+            app.UseMiddleware<CustomExceptionHandler>();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

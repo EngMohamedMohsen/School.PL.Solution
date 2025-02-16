@@ -160,26 +160,18 @@ namespace School.PL.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    var result = await _userServices.UpdateUserAsync(id.Value, appUserUpdate);
+                var result = await _userServices.UpdateUserAsync(id.Value, appUserUpdate);
 
-                    if (result.Succeeded)
-                    {
-                        _logger.LogInformation("User updated successfully");
-                        return RedirectToAction(nameof(Index));
-                    }
-                    else
-                    {
-                        _logger.LogWarning("User update failed");
-                        ModelState.AddModelError(string.Empty, "Update failed");
-                        return View(appUserUpdate);
-                    }
-                }
-                catch (Exception ex)
+                if (result.Succeeded)
                 {
-                    _logger.LogError(ex, "Error updating user");
-                    return StatusCode(500, "Internal server error");
+                    _logger.LogInformation("User updated successfully");
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    _logger.LogWarning("User update failed");
+                    ModelState.AddModelError(string.Empty, "Update failed");
+                    return View(appUserUpdate);
                 }
             }
             return View(appUserUpdate);
@@ -235,23 +227,14 @@ namespace School.PL.Controllers
                 ModelState.AddModelError(string.Empty, "Invalid user or class.");
                 return View();
             }
-
-            try
+            var result = await _userServices.AssignUserToClassAsync(userId.Value, classId.Value);
+            if (result)
             {
-                var result = await _userServices.AssignUserToClassAsync(userId.Value, classId.Value);
-                if (result)
-                {
-                    return RedirectToAction(nameof(Success));
-                }
-                else
-                {
-                    ModelState.AddModelError(string.Empty, "Failed to assign user to class.");
-                    return View();
-                }
+                return RedirectToAction(nameof(Success));
             }
-            catch (Exception ex)
+            else
             {
-                ModelState.AddModelError(string.Empty, ex.Message);
+                ModelState.AddModelError(string.Empty, "Failed to assign user to class.");
                 return View();
             }
         }
