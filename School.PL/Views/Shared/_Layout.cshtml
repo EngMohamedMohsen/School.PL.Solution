@@ -26,13 +26,15 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Classes" asp-action="Index">Classes</a>
+                        </li>
+
                     </ul>
                     @if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
                     {
                         <ul class="navbar-nav">
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Classes" asp-action="Index">Classes</a>
-                            </li>
+
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Index">Users</a>
                             </li>
@@ -54,7 +56,7 @@
                     {
                         <ul class="navbar-nav">
                             <li class="nav-item">
-                                <form  asp-controller="Account" asp-action="SignIn">
+                                <form  asp-controller="Account" asp-action="SignIn" method="get">
                                     <button type="submit" class="nav-link btn btn-danger text-white">SignIn</button>
                                 </form>
                             </li>

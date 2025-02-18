@@ -6,7 +6,8 @@ using School.PL.Models;
 
 namespace School.PL.Controllers
 {
-    [CustomAuthorize("Admin")]
+    //[CustomAuthorize("Admin")]
+    [Authorize]
     public class ClassesController : Controller
     {
         private readonly IClassesServices _classesServices;
