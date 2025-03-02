@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -9,8 +9,11 @@ using School.DAL.Contexts;
 using School.DAL.Models;
 using School.PL.Helper.CustomMiddleWare;
 using School.PL.Helper.Services;
+using Serilog;
 using System.Configuration;
 using System.Text;
+using static System.Net.Mime.MediaTypeNames;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace School.PL
 {
@@ -19,10 +22,20 @@ namespace School.PL
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            var logFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "Logs");
+
+            // التأكد من أن مجلد Logs موجود
+            Directory.CreateDirectory(logFolderPath);
+
+            // إنشاء اسم الملف مع التاريخ الحالي
+            string logFilePath = Path.Combine(logFolderPath, $"log-date_{DateTime.Now:yyyyMMdd}.txt");
+            Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(builder.Configuration)
+                .WriteTo.File(logFilePath).CreateLogger();
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
+            builder.Services.AddSerilog();
 
             builder.Services.AddDbContext<SchoolDbContext>(options =>
             {options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionString"));});//Allow DI For AppDbContext
