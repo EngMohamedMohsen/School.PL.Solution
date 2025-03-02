@@ -79,39 +79,39 @@ namespace School.PL.Controllers
         }
 
         #region MyRegion
-        //[HttpPost]
-        //public async Task<IActionResult> SignIn(SignInViewModel model)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        try
-        //        {
-        //            // Check Email Valid
-        //            var user = await _userManager.FindByEmailAsync(model.Email);
-        //            if (user != null)
-        //            {
-        //                // Check Password Valid
-        //                var Flag = await _userManager.CheckPasswordAsync(user, model.Password);
-        //                if (Flag)
-        //                {
-        //                    var Result = await _signInManager.PasswordSignInAsync
-        //                        (user, model.Password, model.RememberMe, false
-        //                        ); // Generate Token for this user sign in 
-        //                    if (Result.Succeeded)
-        //                    {
-        //                        return RedirectToAction("Index", "Home");
-        //                    }
-        //                }
-        //            }
-        //            ModelState.AddModelError("", "Login Failed");
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            ModelState.AddModelError(string.Empty, ex.Message);
-        //        }
-        //    }
-        //    return View(model);
-        //} 
+        [HttpPost]
+        public async Task<IActionResult> SignIn(SignInViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    // Check Email Valid
+                    var user = await _userManager.FindByEmailAsync(model.Email);
+                    if (user != null)
+                    {
+                        // Check Password Valid
+                        var Flag = await _userManager.CheckPasswordAsync(user, model.Password);
+                        if (Flag)
+                        {
+                            var Result = await _signInManager.PasswordSignInAsync
+                                (user, model.Password, model.RememberMe, false
+                                ); // Generate Token for this user sign in 
+                            if (Result.Succeeded)
+                            {
+                                return RedirectToAction("Index", "Home");
+                            }
+                        }
+                    }
+                    ModelState.AddModelError("", "Login Failed");
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                }
+            }
+            return View(model);
+        }
         #endregion
         #endregion
         #region MyRegion
@@ -169,20 +169,20 @@ namespace School.PL.Controllers
         //} 
         #endregion
 
-        [HttpPost]
-        public async Task<IActionResult> SignIn(SignInViewModel model)
-        {
-            var user = await _userManager.FindByEmailAsync(model.Email);
-            if (user is null) return null;
-            var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
-            if (!result.Succeeded) return null;
-            return Ok(new SignInWithTokenReturnViewModel
-            {
-                Email = model.Email,
-                Password = model.Password,
-                Token = _tokenService.CreateToken(user)
-            });
-        }
+        //[HttpPost]
+        //public async Task<IActionResult> SignIn(SignInViewModel model)
+        //{
+        //    var user = await _userManager.FindByEmailAsync(model.Email);
+        //    if (user is null) return null;
+        //    var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
+        //    if (!result.Succeeded) return null;
+        //    return Ok(new SignInWithTokenReturnViewModel
+        //    {
+        //        Email = model.Email,
+        //        Password = model.Password,
+        //        Token = _tokenService.CreateToken(user)
+        //    });
+        //}
         public new async Task<IActionResult> SignOut()
         {
             await _signInManager.SignOutAsync();

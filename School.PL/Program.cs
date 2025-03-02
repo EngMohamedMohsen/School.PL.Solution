@@ -56,25 +56,25 @@ namespace School.PL
                 X.AccessDeniedPath = "/Account/AccessDenied";
             });
 
-            builder.Services.AddAuthentication(o =>
-            {
-                o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(option =>
-            {
-                option.TokenValidationParameters = new TokenValidationParameters()
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidateLifetime = true,
-                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                    ValidAudience = builder.Configuration["Jwt:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
-                };
-            });
+            //builder.Services.AddAuthentication(o =>
+            //{
+            //    o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            //    o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            //}).AddJwtBearer(option =>
+            //{
+            //    option.TokenValidationParameters = new TokenValidationParameters()
+            //    {
+            //        ValidateIssuer = true,
+            //        ValidateAudience = true,
+            //        ValidateIssuerSigningKey = true,
+            //        ValidateLifetime = true,
+            //        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            //        ValidAudience = builder.Configuration["Jwt:Audience"],
+            //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+            //    };
+            //});
 
-            builder.Services.AddAuthorization();
+            //builder.Services.AddAuthorization();
 
             
             var app = builder.Build();
