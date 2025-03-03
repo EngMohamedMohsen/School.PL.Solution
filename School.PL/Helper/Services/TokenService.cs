@@ -18,6 +18,7 @@ namespace School.PL.Helper.Services
         {
             var authclaims = new List<Claim>()
             {
+                new Claim(ClaimTypes.PrimarySid,appUser.Id.ToString()),
                 new Claim(ClaimTypes.Name,appUser.UserName),
                 new Claim(ClaimTypes.Email,appUser.Email),
             };
