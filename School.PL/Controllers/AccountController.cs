@@ -8,6 +8,7 @@ using School.DAL.Models;
 using School.PL.Helper.Services;
 using School.PL.Models.AccountView;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace School.PL.Controllers
 {
@@ -18,21 +19,20 @@ namespace School.PL.Controllers
         private readonly ITokenService _tokenService;
         private readonly SchoolDbContext _schoolDbContext;
         private readonly IMemoryCache _memoryCache;
+        private readonly IRedisService _redisService;
 
-        public AccountController
-            (
-                UserManager<AppUser> userManager, 
-                SignInManager<AppUser> signInManager,
-                ITokenService tokenService,
-                SchoolDbContext schoolDbContext,
-                IMemoryCache memoryCache
-            )
+        public AccountController(UserManager<AppUser> userManager,SignInManager<AppUser> signInManager,
+                                 ITokenService tokenService,
+                                 SchoolDbContext schoolDbContext,
+                                 IMemoryCache memoryCache,
+                                 IRedisService redisService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenService = tokenService;
             _schoolDbContext = schoolDbContext;
             _memoryCache = memoryCache;
+            _redisService = redisService;
         }
         [HttpGet]
         public IActionResult SignUp()
@@ -181,9 +181,9 @@ namespace School.PL.Controllers
         public async Task<IActionResult> SignIn(SignInViewModel model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
-            if (user is null) return null;
+            if (user is null) return Unauthorized("Invalid email or password");
             var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
-            if (!result.Succeeded) return null;
+            if (!result.Succeeded) return Unauthorized("Invalid email or password");
             return Ok(new SignInWithTokenReturnViewModel
             {
                 Email = model.Email,
@@ -235,7 +235,7 @@ namespace School.PL.Controllers
 
             if (cacheData != null)
             {
-                return Json(cacheData);
+                return Ok(cacheData);
             }
 
             // استرجاع بيانات المستخدم من قاعدة البيانات
@@ -250,7 +250,41 @@ namespace School.PL.Controllers
             var expirationTime = DateTimeOffset.Now.AddMinutes(5.0);
             _memoryCache.Set(cacheKey, cacheData, expirationTime);
 
-            return Json(cacheData);
+            return Ok(cacheData);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> GetDataFromRedis()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.PrimarySid);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
+
+            // جلب بيانات المستخدم من Redis
+            var cacheKey = $"User_{userId}";
+            var cachedUserData = await _redisService.GetValueAsync(cacheKey);
+
+            if (!string.IsNullOrEmpty(cachedUserData))
+            {
+                var user = JsonSerializer.Deserialize<AppUser>(cachedUserData);
+                return Ok(user);
+            }
+
+            // استرجاع المستخدم من قاعدة البيانات إذا لم يكن موجودًا في Redis
+            var userFromDb = await _schoolDbContext.Users.FindAsync(userId);
+            if (userFromDb == null)
+            {
+                return NotFound();
+            }
+
+            // تخزينه مجددًا في Redis
+            var userData = JsonSerializer.Serialize(userFromDb);
+            await _redisService.SetValueAsync(cacheKey, userData, TimeSpan.FromMinutes(5));
+
+            return Ok(userFromDb);
         }
     }
 }

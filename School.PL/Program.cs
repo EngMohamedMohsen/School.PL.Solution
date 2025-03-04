@@ -9,6 +9,7 @@ using School.DAL.Models;
 using School.PL.Helper.CustomMiddleWare;
 using School.PL.Helper.Services;
 using Serilog;
+using StackExchange.Redis;
 using System.Text;
 
 namespace School.PL
@@ -19,6 +20,7 @@ namespace School.PL
         {
             var builder = WebApplication.CreateBuilder(args);
             var logFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "Logs");
+
 
             // التأكد من أن مجلد Logs موجود
             Directory.CreateDirectory(logFolderPath);
@@ -37,9 +39,14 @@ namespace School.PL
             {options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionString"));});//Allow DI For AppDbContext
 
             builder.Services.AddScoped<IUnitOfWork,UnitOfWork>(); // Allow Dependency Injection For UnitOfWork Service
-            builder.Services.AddScoped<IClassesServices,ClassesServices>(); // Allow Dependency Injection For UnitOfWork Service
-            builder.Services.AddScoped<IUserServices,UserServices>(); // Allow Dependency Injection For UnitOfWork Service
-            builder.Services.AddScoped<ITokenService,TokenService>(); // Allow Dependency Injection For UnitOfWork Service
+            builder.Services.AddScoped<IClassesServices,ClassesServices>(); // Allow Dependency Injection For Classes Service
+            builder.Services.AddScoped<IUserServices,UserServices>(); // Allow Dependency Injection For Users Service
+            builder.Services.AddScoped<ITokenService,TokenService>(); // Allow Dependency Injection For Token Service
+            builder.Services.AddScoped<IRedisService, RedisService>(); // Allow Dependency Injection For RedisServices
+            builder.Services.AddSingleton<IConnectionMultiplexer>
+                (
+                option => ConnectionMultiplexer.Connect(builder.Configuration["Redis:ConnectionString"])
+                ); // Add Redis Connection
 
             builder.Services.AddIdentity<AppUser,IdentityRole>()
                             .AddEntityFrameworkStores<SchoolDbContext>()
