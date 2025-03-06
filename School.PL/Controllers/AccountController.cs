@@ -7,6 +7,8 @@ using School.DAL.Contexts;
 using School.DAL.Models;
 using School.PL.Helper.Services;
 using School.PL.Models.AccountView;
+using System.Net.Http.Headers;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Text.Json;
 
@@ -20,12 +22,13 @@ namespace School.PL.Controllers
         private readonly SchoolDbContext _schoolDbContext;
         private readonly IMemoryCache _memoryCache;
         private readonly IRedisService _redisService;
+        private readonly HttpClient _httpClient;
 
         public AccountController(UserManager<AppUser> userManager,SignInManager<AppUser> signInManager,
                                  ITokenService tokenService,
                                  SchoolDbContext schoolDbContext,
                                  IMemoryCache memoryCache,
-                                 IRedisService redisService)
+                                 IRedisService redisService,HttpClient httpClient)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -33,6 +36,7 @@ namespace School.PL.Controllers
             _schoolDbContext = schoolDbContext;
             _memoryCache = memoryCache;
             _redisService = redisService;
+            _httpClient = httpClient;
         }
         [HttpGet]
         public IActionResult SignUp()
@@ -184,12 +188,20 @@ namespace School.PL.Controllers
             if (user is null) return Unauthorized("Invalid email or password");
             var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
             if (!result.Succeeded) return Unauthorized("Invalid email or password");
-            return Ok(new SignInWithTokenReturnViewModel
-            {
-                Email = model.Email,
-                Password = model.Password,
-                Token = _tokenService.CreateToken(user)
-            });
+            var token = _tokenService.CreateToken(user);
+
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        [Authorize]
+        public IActionResult TestAuth()
+        {
+            var token = HttpContext.Request.Headers["Authorization"];
+            Console.WriteLine("Received Token: " + token);
+            return Ok(token);
         }
         public new async Task<IActionResult> SignOut()
         {

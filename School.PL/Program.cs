@@ -52,12 +52,12 @@ namespace School.PL
                             .AddEntityFrameworkStores<SchoolDbContext>()
                             .AddDefaultTokenProviders();
 
-            builder.Services.ConfigureApplicationCookie(X =>
-            {
-                X.LoginPath = "/Account/SignIn";
-                X.LogoutPath = "/Account/SignOut";
-                X.AccessDeniedPath = "/Account/AccessDenied";
-            });
+            //builder.Services.ConfigureApplicationCookie(X =>
+            //{
+            //    X.LoginPath = "/Account/SignIn";
+            //    X.LogoutPath = "/Account/SignOut";
+            //    X.AccessDeniedPath = "/Account/AccessDenied";
+            //});
 
             builder.Services.AddAuthentication(o =>
             {
@@ -76,7 +76,7 @@ namespace School.PL
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
                 };
             });
-
+            builder.Services.AddHttpClient();
             builder.Services.AddAuthorization();
 
 
