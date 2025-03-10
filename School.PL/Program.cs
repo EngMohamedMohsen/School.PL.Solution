@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using School.BLL.Interfaces;
 using School.BLL.Repositores;
 using School.DAL.Contexts;
@@ -10,7 +8,6 @@ using School.PL.Helper.CustomMiddleWare;
 using School.PL.Helper.Services;
 using Serilog;
 using StackExchange.Redis;
-using System.Text;
 
 namespace School.PL
 {
@@ -22,15 +19,12 @@ namespace School.PL
             var logFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "Logs");
 
 
-            // التأكد من أن مجلد Logs موجود
             Directory.CreateDirectory(logFolderPath);
 
-            // إنشاء اسم الملف مع التاريخ الحالي
             string logFilePath = Path.Combine(logFolderPath, $"log-date_{DateTime.Now:yyyyMMdd}.txt");
             Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(builder.Configuration)
                 .WriteTo.File(logFilePath).CreateLogger();
 
-            // Add services to the container.
             builder.Services.AddControllersWithViews();
 
             builder.Services.AddSerilog();
@@ -52,32 +46,28 @@ namespace School.PL
                             .AddEntityFrameworkStores<SchoolDbContext>()
                             .AddDefaultTokenProviders();
 
-            //builder.Services.ConfigureApplicationCookie(X =>
-            //{
-            //    X.LoginPath = "/Account/SignIn";
-            //    X.LogoutPath = "/Account/SignOut";
-            //    X.AccessDeniedPath = "/Account/AccessDenied";
-            //});
-
-            builder.Services.AddAuthentication(o =>
+            builder.Services.ConfigureApplicationCookie(X =>
             {
-                o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(option =>
-            {
-                option.TokenValidationParameters = new TokenValidationParameters()
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidateLifetime = true,
-                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                    ValidAudience = builder.Configuration["Jwt:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
-                };
+                X.LoginPath = "/Account/SignIn";
+                X.LogoutPath = "/Account/SignOut";
+                X.AccessDeniedPath = "/Account/AccessDenied";
             });
+
+            //builder.Services.AddAuthentication().AddJwtBearer(option =>
+            //{
+            //    option.TokenValidationParameters = new TokenValidationParameters()
+            //    {
+            //        ValidateIssuer = true,
+            //        ValidateAudience = true,
+            //        ValidateIssuerSigningKey = true,
+            //        ValidateLifetime = true,
+            //        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            //        ValidAudience = builder.Configuration["Jwt:Audience"],
+            //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+            //    };
+            //});
             builder.Services.AddHttpClient();
-            builder.Services.AddAuthorization();
+            //builder.Services.AddAuthorization();
 
 
             var app = builder.Build();

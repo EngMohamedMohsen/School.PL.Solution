@@ -14,7 +14,10 @@ namespace School.PL.Controllers
         private readonly ILogger<UserController> _logger;
         private readonly UserManager<AppUser> _userManager;
 
-        public RoleController(RoleManager<IdentityRole> roleManager, ILogger<UserController> logger,UserManager<AppUser> userManager)
+        public RoleController(
+            RoleManager<IdentityRole> roleManager,
+            ILogger<UserController> logger,
+            UserManager<AppUser> userManager)
         {
             _roleManager = roleManager;
             _logger = logger;

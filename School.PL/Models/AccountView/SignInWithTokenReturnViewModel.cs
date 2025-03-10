@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace School.PL.Models.AccountView
+﻿namespace School.PL.Models.AccountView
 {
     public class SignInWithTokenReturnViewModel
     {

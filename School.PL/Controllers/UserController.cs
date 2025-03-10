@@ -13,7 +13,7 @@ namespace School.PL.Controllers
         private readonly IClassesServices _classesServices;
         private ILogger<UserController> _logger;
 
-        public UserController(ILogger<UserController> logger,IUserServices userServices,IClassesServices classesServices )
+        public UserController(ILogger<UserController> logger,IUserServices userServices,IClassesServices classesServices)
         {
             _logger = logger;
             _userServices = userServices;

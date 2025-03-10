@@ -1,13 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using School.PL.Helper.CustomAttributes;
 using School.PL.Helper.Services;
 using School.PL.Models;
 
 namespace School.PL.Controllers
 {
-    //[CustomAuthorize("Admin")]
-    [Authorize]
+    [CustomAuthorize("Admin")]
     public class ClassesController : Controller
     {
         private readonly IClassesServices _classesServices;

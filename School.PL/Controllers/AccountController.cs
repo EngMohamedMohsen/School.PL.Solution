@@ -1,14 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using School.DAL.Contexts;
 using School.DAL.Models;
 using School.PL.Helper.Services;
 using School.PL.Models.AccountView;
-using System.Net.Http.Headers;
-using System.Net.Http;
 using System.Security.Claims;
 using System.Text.Json;
 
@@ -18,11 +15,9 @@ namespace School.PL.Controllers
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
-        private readonly ITokenService _tokenService;
         private readonly SchoolDbContext _schoolDbContext;
         private readonly IMemoryCache _memoryCache;
         private readonly IRedisService _redisService;
-        private readonly HttpClient _httpClient;
 
         public AccountController(UserManager<AppUser> userManager,SignInManager<AppUser> signInManager,
                                  ITokenService tokenService,
@@ -32,11 +27,9 @@ namespace School.PL.Controllers
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _tokenService = tokenService;
             _schoolDbContext = schoolDbContext;
             _memoryCache = memoryCache;
             _redisService = redisService;
-            _httpClient = httpClient;
         }
         [HttpGet]
         public IActionResult SignUp()
@@ -93,39 +86,37 @@ namespace School.PL.Controllers
             return View();
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> SignIn(SignInViewModel model)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        try
-        //        {
-        //            // Check Email Valid
-        //            var user = await _userManager.FindByEmailAsync(model.Email);
-        //            if (user != null)
-        //            {
-        //                // Check Password Valid
-        //                var Flag = await _userManager.CheckPasswordAsync(user, model.Password);
-        //                if (Flag)
-        //                {
-        //                    var Result = await _signInManager.PasswordSignInAsync
-        //                        (user, model.Password, model.RememberMe, false
-        //                        ); // Generate Token for this user sign in 
-        //                    if (Result.Succeeded)
-        //                    {
-        //                        return RedirectToAction("Index", "Home");
-        //                    }
-        //                }
-        //            }
-        //            ModelState.AddModelError("", "Login Failed");
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            ModelState.AddModelError(string.Empty, ex.Message);
-        //        }
-        //    }
-        //    return View(model);
-        //}
+        [HttpPost]
+        public async Task<IActionResult> SignIn(SignInViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+               // Check Email Valid
+               var user = await _userManager.FindByEmailAsync(model.Email);
+               if (user != null)
+               {
+                   // Check Password Valid
+                   var Flag = await _userManager.CheckPasswordAsync(user, model.Password);
+                   if (Flag)
+                   {
+                       var Result = await _signInManager.PasswordSignInAsync
+                           (user, model.Password, model.RememberMe, false
+                           ); // Generate Token for this user sign in 
+                       if (Result.Succeeded)
+                       {
+                            var cacheData = user;
+                            var cacheKey = $"User_{user.Id}";
+                            var expirationTime = DateTimeOffset.Now.AddMinutes(5.0);
+                            _memoryCache.Set(cacheKey, user, expirationTime);
+                            return RedirectToAction("Index", "Home");
+                       }
+                   }
+               }
+
+               ModelState.AddModelError("", "Login Failed");
+            }
+            return View(model);
+        }
         #region MyRegion
         //[HttpPost]
         //public async Task<IActionResult> SignIn(SignInViewModel model)
@@ -181,19 +172,19 @@ namespace School.PL.Controllers
         //} 
         #endregion
 
-        [HttpPost]
-        public async Task<IActionResult> SignIn(SignInViewModel model)
-        {
-            var user = await _userManager.FindByEmailAsync(model.Email);
-            if (user is null) return Unauthorized("Invalid email or password");
-            var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
-            if (!result.Succeeded) return Unauthorized("Invalid email or password");
-            var token = _tokenService.CreateToken(user);
+        //[HttpPost]
+        //public async Task<IActionResult> SignIn(SignInViewModel model)
+        //{
+        //    var user = await _userManager.FindByEmailAsync(model.Email);
+        //    if (user is null) return Unauthorized("Invalid email or password");
+        //    var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
+        //    if (!result.Succeeded) return Unauthorized("Invalid email or password");
+        //    var token = _tokenService.CreateToken(user);
 
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        //    _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            return RedirectToAction("Index", "Home");
-        }
+        //    return RedirectToAction("Index", "Home");
+        //}
 
         [HttpGet]
         [Authorize]
@@ -216,6 +207,11 @@ namespace School.PL.Controllers
             return View();
         }
 
+        public IActionResult GetDataFromCache()
+        {
+            return View();
+        }
+
         //public async Task<IActionResult> MemoryCache()
         //{
         //    var cacheData = _memoryCache.Get<IEnumerable<AppUser>>("User");
@@ -229,41 +225,57 @@ namespace School.PL.Controllers
         //    _memoryCache.Set("User", cacheData, expirationTime);
         //    return Json(cacheData);
         //}
-        [HttpPost]
-        [Authorize] // تأكد من أن المستخدم مسجل الدخول
-        public async Task<IActionResult> GetDataFromCache()
-        {
-            // الحصول على معرف المستخدم الحالي
-            var userId = User.FindFirstValue(ClaimTypes.PrimarySid);
 
+        [HttpGet]
+        [Authorize]
+        public IActionResult GetSignInCacheData()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId))
             {
-                return Unauthorized(); // إذا لم يكن هناك مستخدم مسجل، أعد استجابة غير مصرح بها
+                return Unauthorized();
             }
 
-            // البحث عن بيانات المستخدم المخزنة في الكاش
             var cacheKey = $"User_{userId}";
-            var cacheData = _memoryCache.Get<AppUser>(cacheKey);
-
-            if (cacheData != null)
+            if (_memoryCache.TryGetValue(cacheKey, out AppUser cacheData))
             {
                 return Ok(cacheData);
             }
 
-            // استرجاع بيانات المستخدم من قاعدة البيانات
-            cacheData = await _schoolDbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
-
-            if (cacheData == null)
-            {
-                return NotFound(); // المستخدم غير موجود في قاعدة البيانات
-            }
-
-            // تخزين البيانات في الكاش لمدة 5 دقائق
-            var expirationTime = DateTimeOffset.Now.AddMinutes(5.0);
-            _memoryCache.Set(cacheKey, cacheData, expirationTime);
-
-            return Ok(cacheData);
+            return NotFound("No cached data found for this user.");
         }
+        //[HttpPost]
+        //[Authorize]
+        //public async Task<IActionResult> GetDataFromCache()
+        //{
+        //    // الحصول على معرف المستخدم الحالي
+        //    var userId = User.FindFirstValue(ClaimTypes.PrimarySid);
+
+        //    if (string.IsNullOrEmpty(userId))
+        //    {
+        //        return Unauthorized(); 
+        //    }
+
+        //    var cacheKey = $"User_{userId}";
+        //    var cacheData = _memoryCache.Get<AppUser>(cacheKey);
+
+        //    if (cacheData != null)
+        //    {
+        //        return Ok(cacheData);
+        //    }
+
+        //    cacheData = await _schoolDbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
+
+        //    if (cacheData == null)
+        //    {
+        //        return NotFound(); 
+        //    }
+
+        //    var expirationTime = DateTimeOffset.Now.AddMinutes(5.0);
+        //    _memoryCache.Set(cacheKey, cacheData, expirationTime);
+
+        //    return Ok(cacheData);
+        //}
 
         [HttpPost]
         [Authorize]
@@ -294,7 +306,9 @@ namespace School.PL.Controllers
 
             // تخزينه مجددًا في Redis
             var userData = JsonSerializer.Serialize(userFromDb);
-            await _redisService.SetValueAsync(cacheKey, userData, TimeSpan.FromMinutes(5));
+            await _redisService.SetValueAsync(cacheKey,
+                                             userData,
+                                             TimeSpan.FromMinutes(5));
 
             return Ok(userFromDb);
         }
