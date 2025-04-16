@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Hangfire;
+using Hangfire.SqlServer;
+using Microsoft.Data.SqlClient;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using School.BLL.Interfaces;
 using School.BLL.Repositores;
@@ -8,6 +11,7 @@ using School.PL.Helper.CustomMiddleWare;
 using School.PL.Helper.Services;
 using Serilog;
 using StackExchange.Redis;
+using System.Configuration;
 
 namespace School.PL
 {
@@ -26,7 +30,6 @@ namespace School.PL
                 .WriteTo.File(logFilePath).CreateLogger();
 
             builder.Services.AddControllersWithViews();
-
             builder.Services.AddSerilog();
 
             builder.Services.AddDbContext<SchoolDbContext>(options =>
@@ -37,6 +40,7 @@ namespace School.PL
             builder.Services.AddScoped<IUserServices,UserServices>(); // Allow Dependency Injection For Users Service
             builder.Services.AddScoped<ITokenService,TokenService>(); // Allow Dependency Injection For Token Service
             builder.Services.AddScoped<IRedisService, RedisService>(); // Allow Dependency Injection For RedisServices
+            builder.Services.AddScoped<MyRecurringJob>();
             builder.Services.AddSingleton<IConnectionMultiplexer>
                 (
                 option => ConnectionMultiplexer.Connect(builder.Configuration["Redis:ConnectionString"])
@@ -68,6 +72,18 @@ namespace School.PL
             //});
             builder.Services.AddHttpClient();
             //builder.Services.AddAuthorization();
+            builder.Services.AddHangfire(config => 
+            config.SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                  .UseSimpleAssemblyNameTypeSerializer()
+                  .UseDefaultTypeSerializer()
+                      .UseSqlServerStorage(builder.Configuration.GetConnectionString("Hangfire"), new SqlServerStorageOptions
+                      {
+                          TryAutoDetectSchemaDependentOptions = false // Defaults to `true`
+                      }));
+
+            
+
+            builder.Services.AddHangfireServer();
 
 
             var app = builder.Build();
@@ -84,6 +100,16 @@ namespace School.PL
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseHangfireDashboard("/Dashboard");
+
+            // Schedule the recurring job (Runs every 2 days)
+            // Define and schedule the recurring job inside the Index method
+            var recurringJobService = app.Services.CreateScope().ServiceProvider.GetRequiredService<MyRecurringJob>();
+            RecurringJob.AddOrUpdate("class-fetch-job",
+                () => recurringJobService.RunJobAsync(),
+                "0 0 */2 * *" // Every 2 days
+            );
 
             app.UseAuthentication();
             app.UseAuthorization();

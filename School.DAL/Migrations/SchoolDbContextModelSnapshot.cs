@@ -246,7 +246,7 @@ namespace School.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Classes");
+                    b.ToTable("Classes", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
